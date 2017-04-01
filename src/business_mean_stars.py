@@ -12,19 +12,19 @@ def business_mean_stars_by_location(json_file, business_name, location_strata="p
                 data.append(json.loads(line))
             except ValueError as e:
                 print e
-        strata_dict = stratified_data(data, "name", business_name, location_strata)
+    strata_dict = stratified_data(data, "name", business_name, location_strata)
 
-        val_col_width = 16
-        print(location_strata.upper().ljust(26) + "NUM LOCATIONS".ljust(val_col_width)
-              + "STAR AVG".ljust(val_col_width) + "AVG NUM REVIEWS".ljust(val_col_width))
-        for strata, business_list in strata_dict.iteritems():
-            if len(business_list) is not 0:
-                num_businesses, star_avg, avg_num_reviews = strata_stats(business_list)
-                print(strata.ljust(26) + str(num_businesses).ljust(val_col_width)
-                      + ("%.2f" % star_avg).ljust(val_col_width)
-                      + ("%.2f" % avg_num_reviews).ljust(val_col_width))
-            else:
-                continue
+    val_col_width = 16
+    print(location_strata.upper().ljust(26) + "NUM LOCATIONS".ljust(val_col_width)
+          + "STAR AVG".ljust(val_col_width) + "AVG NUM REVIEWS".ljust(val_col_width))
+    for strata, business_list in strata_dict.iteritems():
+        if len(business_list) is not 0:
+            num_businesses, star_avg, avg_num_reviews = strata_stats(business_list)
+            print(strata.ljust(26) + str(num_businesses).ljust(val_col_width)
+                  + ("%.2f" % star_avg).ljust(val_col_width)
+                  + ("%.2f" % avg_num_reviews).ljust(val_col_width))
+        else:
+            continue
 
 
 def stratified_data(data, common_attribute, common_value, stratify_by, sorted_by="location"):
