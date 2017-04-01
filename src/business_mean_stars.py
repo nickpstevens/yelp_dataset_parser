@@ -64,6 +64,7 @@ def strata_stats(businesses):
 
 
 if __name__ == '__main__':
+    # The json_file for this has to be yelp_dataset_challenge_round9/yelp_academic_dataset_business.json
     json_file = sys.argv[1]
     business_name = sys.argv[2]
     if len(sys.argv) > 3:
