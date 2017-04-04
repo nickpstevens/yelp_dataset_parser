@@ -63,12 +63,16 @@ def strata_stats(businesses):
     return num_businesses, star_avg, avg_num_reviews
 
 
-if __name__ == '__main__':
+def main(args):
     # The json_file for this has to be yelp_dataset_challenge_round9/yelp_academic_dataset_business.json
-    json_file = sys.argv[1]
-    business_name = sys.argv[2]
-    if len(sys.argv) > 3:
-        location_strata = sys.argv[3]
+    json_file = args[1]
+    business_name = args[2]
+    if len(args) > 3:
+        location_strata = args[3]
         business_mean_stars_by_location(json_file, business_name, location_strata)
     else:
         business_mean_stars_by_location(json_file, business_name)
+
+
+if __name__ == '__main__':
+    main(sys.argv)
