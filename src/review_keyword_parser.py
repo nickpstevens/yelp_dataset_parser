@@ -15,13 +15,13 @@ KEYWORDS = [
     "morning's",
     "evening",
     "evening's",
-    #"sunday",
-    #"monday",
-    #"tuesday",
-    #"wednesday",
-    #"thursday",
-    #"friday",
-    #"saturday",
+    # "sunday",
+    # "monday",
+    # "tuesday",
+    # "wednesday",
+    # "thursday",
+    # "friday",
+    # "saturday",
 ]
 
 
@@ -73,12 +73,15 @@ def n_surrounding_words(word_list, keyword, n):
     return word_list[keyword_index - left_n:keyword_index + right_n]
 
 
-
-if __name__ == '__main__':
+def main(args):
     # The json_file for this has to be yelp_dataset_challenge_round9/yelp_academic_dataset_review.json
-    json_file = sys.argv[1]
-    if len(sys.argv) >= 3:
-        keywords = sys.argv[2:]
+    json_file = args[1]
+    if len(args) >= 3:
+        keywords = args[2:]
         reviews_with_keywords(json_file, *keywords)
     else:
         reviews_with_keywords(json_file)
+
+
+if __name__ == '__main__':
+    main(sys.argv)
