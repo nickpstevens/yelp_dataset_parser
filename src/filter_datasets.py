@@ -26,7 +26,7 @@ def filter_data(business_file, review_file):
             for line in fin:
                 try:
                     entry = json.loads(line)
-                    if re.match('[0-9]{5}', entry['postal_code']):
+                    if re.match('(28|29|44|88|89|53|85|15|61)[0-9]{3}', entry['postal_code']):
                         business_ids.add(entry['business_id'])
                         fout.write(line)
                 except ValueError as e:
