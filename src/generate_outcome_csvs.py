@@ -6,7 +6,7 @@ import os
 from collections import OrderedDict
 
 
-def group_by_city(business_file, review_file):
+def outcome_csvs(business_file, review_file):
     city_businesses_map = map_cities_to_lists()
     business_id_city_map = {}
     with open(business_file) as fin:
@@ -19,14 +19,12 @@ def group_by_city(business_file, review_file):
             except ValueError as e:
                 print e
 
-    #city_reviews_map = map_cities_to_lists()
     outcome1_map = map_cities_to_dicts()
     with open(review_file) as fin:
         for line in fin:
             try:
                 entry = json.loads(line)
                 city = business_id_city_map[entry['business_id']]
-                #city_reviews_map[city].append(entry)
                 date = re.sub('[^0-9]', '', entry['date'])
                 try:
                     outcome1_map[city][date] += 1
@@ -49,7 +47,7 @@ def map_cities_to_lists():
     city_map['madison'] = []
     city_map['phoenix'] = []
     city_map['pittsburgh'] = []
-    city_map['urbana-champaign'] = []
+    city_map['urbana'] = []
     return city_map
 
 
@@ -61,7 +59,7 @@ def map_cities_to_dicts():
     city_map['madison'] = dict()
     city_map['phoenix'] = dict()
     city_map['pittsburgh'] = dict()
-    city_map['urbana-champaign'] = dict()
+    city_map['urbana'] = dict()
     return city_map
 
 
@@ -79,7 +77,7 @@ def determine_city_from_business(business):
     elif re.match('15[0-9]{3}', business['postal_code']):
         return 'pittsburgh'
     elif re.match('61[0-9]{3}', business['postal_code']):
-        return 'urbana-champaign'
+        return 'urbana'
     else:
         return 'other'
 
@@ -107,7 +105,7 @@ def write_rows_recursive(f, writer, mapping, row_elements):
 def main(args):
     business_file = args[1]
     review_file = args[2]
-    group_by_city(business_file, review_file)
+    outcome_csvs(business_file, review_file)
 
 
 if __name__ == '__main__':
