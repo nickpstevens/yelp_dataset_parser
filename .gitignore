@@ -2,3 +2,5 @@
 yelp_dataset_challenge_round9/
 modified_datasets/
 *.ipynb
+.Rhistory
+.RData
