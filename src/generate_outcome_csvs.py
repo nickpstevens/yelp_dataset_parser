@@ -27,7 +27,7 @@ def group_by_city(business_file, review_file):
                 entry = json.loads(line)
                 city = business_id_city_map[entry['business_id']]
                 #city_reviews_map[city].append(entry)
-                date = re.sub('[^0-9]', '', entry['date'])
+                date = entry['date']
                 try:
                     outcome1_map[city][date] += 1
                 except KeyError:

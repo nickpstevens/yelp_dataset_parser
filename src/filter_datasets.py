@@ -2,6 +2,7 @@ import sys
 import json
 import re
 import os
+from collections import defaultdict
 
 
 """
@@ -26,12 +27,15 @@ def filter_data(business_file, review_file):
             for line in fin:
                 try:
                     entry = json.loads(line)
+                    # Only match on the the US cities.
                     if re.match('(28|29|44|88|89|53|85|15|61)[0-9]{3}', entry['postal_code']):
-                        business_ids.add(entry['business_id'])
-                        entry['city'] = determine_city_from_business(entry)
-                        write_line = json.dumps(entry)
-                        fout.write(write_line)
-                        fout.write('\n')
+                        # Only take businesses with an ambience and price range
+                        if entry['attributes'] and [string for string in entry['attributes'] if re.match("^RestaurantsPriceRange2:", string)] and [string for string in entry['attributes'] if re.match("^Ambience:", string)]:
+                            business_ids.add(entry['business_id'])
+                            entry['city'] = determine_city_from_business(entry)
+                            write_line = json.dumps(entry)
+                            fout.write(write_line)
+                            fout.write('\n')
                 except ValueError as e:
                     print e
     with open(review_file) as fin:
@@ -39,7 +43,7 @@ def filter_data(business_file, review_file):
             for line in fin:
                 try:
                     entry = json.loads(line)
-                    if entry['business_id'] in business_ids:
+                    if entry['business_id'] in business_ids and int(entry['date'][:4]) >= 2007 and int(entry['date'][:4]) < 2017:
                         fout.write(line)
                 except ValueError as e:
                     print e
