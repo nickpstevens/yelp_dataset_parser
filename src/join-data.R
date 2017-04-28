@@ -24,5 +24,8 @@ final_df <- merge(x = df, y = weather_df, by = c("date", "city"), all.x = TRUE)
 final_df$business_id<-NULL
 final_df$user_id<-NULL
 
+# Add day of week
+final_df$day <- weekdays(as.Date(df$date))
+
 # Optionally, write out to csv
 write.csv(final_df, "modified_datasets/all_data.csv")
