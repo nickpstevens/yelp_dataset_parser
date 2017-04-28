@@ -7,6 +7,7 @@ from collections import defaultdict
 
 BUSINESS_FIELDS = ['city', 'business_id', 'postal_code', 'stars', 'review_count']
 REVIEW_FIELDS = ['user_id', 'business_id', 'stars', 'date']
+USER_FIELDS = ['user_id', 'review_count', 'average_stars']
 
 """
 The datasets that this creates are too big to push to GitHub, so you have to run this on your own.
@@ -15,9 +16,10 @@ python src/filter_datasets.py 'yelp_dataset_challenge_round9/yelp_academic_datas
 """
 
 
-def filter_data(business_file, review_file):
+def filter_data(business_file, review_file, user_file):
     business_out_path = 'modified_datasets/american_business.json'
     review_out_path = 'modified_datasets/american_review.json'
+    user_out_path = 'modified_datasets/american_user.json'
     out_dir = os.path.dirname(business_out_path)
     try:
         os.makedirs(out_dir)
@@ -52,14 +54,29 @@ def filter_data(business_file, review_file):
                             fout.write('\n')
                 except ValueError as e:
                     print e
+    user_ids = set()
     with open(review_file) as fin:
         with open(review_out_path, 'w+') as fout:
             for line in fin:
                 try:
                     entry = json.loads(line)
                     if entry['business_id'] in business_ids and int(entry['date'][:4]) >= 2007 and int(entry['date'][:4]) < 2017:
+                        user_ids.add(entry['user_id'])
                         to_write = {}
                         for field in REVIEW_FIELDS:
+                            to_write[field] = entry[field]
+                        fout.write(json.dumps(to_write))
+                        fout.write('\n')
+                except ValueError as e:
+                    print e
+    with open(user_file) as fin:
+        with open(user_out_path, 'w+') as fout:
+            for line in fin:
+                try:
+                    entry = json.loads(line)
+                    if entry['user_id'] in user_ids:
+                        to_write = {}
+                        for field in USER_FIELDS:
                             to_write[field] = entry[field]
                         fout.write(json.dumps(to_write))
                         fout.write('\n')
@@ -89,7 +106,8 @@ def determine_city_from_business(business):
 def main(args):
     business_file = args[1]
     review_file = args[2]
-    filter_data(business_file, review_file)
+    user_file = args[3]
+    filter_data(business_file, review_file, user_file)
 
 
 if __name__ == '__main__':
