@@ -6,7 +6,7 @@ from collections import defaultdict
 
 
 BUSINESS_FIELDS = ['city', 'business_id', 'postal_code', 'stars', 'review_count']
-ATTRIBUTES = ['Ambience', 'RestaurantsPriceRange2']
+REVIEW_FIELDS = ['user_id', 'business_id', 'stars', 'date']
 
 """
 The datasets that this creates are too big to push to GitHub, so you have to run this on your own.
@@ -58,7 +58,11 @@ def filter_data(business_file, review_file):
                 try:
                     entry = json.loads(line)
                     if entry['business_id'] in business_ids and int(entry['date'][:4]) >= 2007 and int(entry['date'][:4]) < 2017:
-                        fout.write(line)
+                        to_write = {}
+                        for field in REVIEW_FIELDS:
+                            to_write[field] = entry[field]
+                        fout.write(json.dumps(to_write))
+                        fout.write('\n')
                 except ValueError as e:
                     print e
 
