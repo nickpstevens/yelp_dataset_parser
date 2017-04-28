@@ -34,7 +34,7 @@ def outcome_csvs(business_file, review_file):
             except ValueError as e:
                 print e
     for city, date_num_reviews_map in outcome1_map.iteritems():
-        outcome1_map[city] = OrderedDict(sorted(date_num_reviews_map.items()))
+       outcome1_map[city] = OrderedDict(sorted(date_num_reviews_map.items())) 
     outcome1_map = OrderedDict(sorted(outcome1_map.items()))
 
     write_map_to_csv(outcome1_map, 'outcome_csv/outcome1.csv')
@@ -92,6 +92,7 @@ def write_map_to_csv(mapping, path):
             raise
     with open(path, 'wb') as f:
         writer = csv.writer(f, quoting=csv.QUOTE_ALL)
+        writer.writerow(['city', 'date', 'review_count'])
         write_rows_recursive(f, writer, mapping, [])
 
 
