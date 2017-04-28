@@ -5,6 +5,9 @@ import os
 from collections import defaultdict
 
 
+BUSINESS_FIELDS = ['city', 'business_id', 'postal_code', 'stars', 'review_count']
+ATTRIBUTES = ['Ambience', 'RestaurantsPriceRange2']
+
 """
 The datasets that this creates are too big to push to GitHub, so you have to run this on your own.
 Just execute the following command from the project root:
@@ -33,7 +36,18 @@ def filter_data(business_file, review_file):
                         if entry['attributes'] and [string for string in entry['attributes'] if re.match("^RestaurantsPriceRange2:", string)] and [string for string in entry['attributes'] if re.match("^Ambience:", string)]:
                             business_ids.add(entry['business_id'])
                             entry['city'] = determine_city_from_business(entry)
-                            write_line = json.dumps(entry)
+                            to_write = {}
+                            for field in BUSINESS_FIELDS:
+                                to_write[field] = entry[field]
+                            attributes = entry['attributes']
+                            for attribute in attributes:
+                                if re.match('^' + 'RestaurantsPriceRange2', attribute):
+                                    to_write['RestaurantsPriceRange2'] = attribute[-1]
+                                elif re.match('^' + 'Ambience', attribute):
+                                    ambience = json.loads(attribute[10:].replace("'", '"').replace('False', '"False"').replace('True', '"True"'))
+                                    for mood in ambience:
+                                        to_write[mood] = ambience[mood]
+                            write_line = json.dumps(to_write)
                             fout.write(write_line)
                             fout.write('\n')
                 except ValueError as e:
