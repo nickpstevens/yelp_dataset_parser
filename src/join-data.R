@@ -25,7 +25,7 @@ final_df$business_id<-NULL
 final_df$user_id<-NULL
 
 # Add day of week
-final_df$day <- weekdays(as.Date(df$date))
+final_df$day <- weekdays(as.Date(final_df$date))
 
 # Optionally, write out to csv
 write.csv(final_df, "modified_datasets/all_data.csv")
