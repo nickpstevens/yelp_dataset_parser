@@ -28,12 +28,12 @@ final_df$user_id<-NULL
 final_df$day <- weekdays(as.Date(final_df$date))
 
 # Average Temp
-final_df$TAVG = (df$TMAX + df$TMIN) / 2
+final_df$TAVG = (final_df$TMAX + final_df$TMIN) / 2
 df$TMAX <- NULL
 df$TMIN <- NULL
 
 # Add Percipitation Boolean
-df$PRCP_B <- df$PRCP>0 | df$SNOW>0
+final_df$PRCP_B <- final_df$PRCP>0 | final_df$SNOW>0
 
 # Optionally, write out to csv
 write.csv(final_df, "modified_datasets/all_data.csv")
