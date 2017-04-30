@@ -35,32 +35,56 @@ get_bins <- function(float_data) {
   # TODO
 }
 
-# Table 3.1 with some random other variable l2
-b <- c(1,2,3,4,5,6,7,8,9,9,9,8,7,6,5,4,3,2,1,1.1)
-l <- c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1)
-l2<- c(0,0,1,1,0,0,1,1,0,0,1,0,0,0,0,0,1,1,1,1)
-a <- c(0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1)
-y <- c(0,1,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1,0,0,0)
-df <- data.frame(b,l,l2,a,y,stringsAsFactors=FALSE)
+# Just saved the previous code just in case
+if (FALSE) {
+  # Table 3.1 with some random other variable l2
+  b <- c(1,2,3,4,5,6,7,8,9,9,9,8,7,6,5,4,3,2,1,1.1)
+  l <- c(0,0,0,0,0,0,0,0,1,1,1,1,1,1,1,1,1,1,1,1)
+  l2<- c(0,0,1,1,0,0,1,1,0,0,1,0,0,0,0,0,1,1,1,1)
+  a <- c(0,0,0,0,1,1,1,1,0,0,0,1,1,1,1,1,1,1,1,1)
+  y <- c(0,1,0,0,0,0,0,1,1,1,0,1,1,1,1,1,1,0,0,0)
+  df <- data.frame(b,l,l2,a,y,stringsAsFactors=FALSE)
+  
+  # Print the data
+  df
+  simFrame::stratify(df, c("a"))
+  # Stratify
+  strata <- simFrame::stratify(df, c("l", "l2"))
+  check_positivity(strata)
+  st1 <- get_subset(df, strata, 1)
+  st2 <- get_subset(df, strata, 2)
+  st3 <- get_subset(df, strata, 3)
+  st4 <- get_subset(df, strata, 4)
+  
+  strata2 <- simFrame::stratify(df, c("l"))
+  check_positivity(strata2)
+  st1 <- get_subset(df, strata2, 1)
+  st2 <- get_subset(df, strata2, 2)
+  get_causal_difference(st1, 'a', 'y')
+  get_causal_difference(st2, 'a', 'y')
+  get_causal_difference(df, 'a', 'y')
+  
+  # Bucket code
+  cut(das$anim, 3)
+}
 
-# Print the data
-df
-simFrame::stratify(df, c("a"))
-# Stratify
-strata <- simFrame::stratify(df, c("l", "l2"))
-check_positivity(strata)
-st1 <- get_subset(df, strata, 1)
-st2 <- get_subset(df, strata, 2)
-st3 <- get_subset(df, strata, 3)
-st4 <- get_subset(df, strata, 4)
+setwd('/Users/Sergiy/Documents/CWRUgrad/Semester 4/EECS 442 Causal Learning from Data/yelp_dataset_parser')
+df <- read.csv("./modified_datasets/all_data.csv")
+# Add T_avg
+df$TAVG = (df$TMAX + df$TMIN) / 2
+# TMAX: {5 83}
+# TMIN: {-12 56}
+# TAVG: {-3.5 68.0}
 
-strata2 <- simFrame::stratify(df, c("l"))
-check_positivity(strata2)
-st1 <- get_subset(df, strata2, 1)
-st2 <- get_subset(df, strata2, 2)
-get_causal_difference(st1, 'a', 'y')
-get_causal_difference(st2, 'a', 'y')
-get_causal_difference(df, 'a', 'y')
+# Split T into buckets (TAVG_CAT column)
+t_breaks <- c(-999, 25, 55, 75, 999) # split points
+#t_labels <- c(1,2,3,4) # group names
+df$TAVG_CAT <- cut(df$TAVG, breaks = t_breaks)
 
-# Bucket code
-cut(das$anim, 3)
+# How does T affect total review count?
+# For each T get average review count
+strata_t <- simFrame::stratify(df, c("TAVG_CAT"))
+strata_t
+strata_mean_reviews <- sapply(strata_t@nr, function(x) mean(get_subset(df, strata_t, x)$user_review_count))
+results_1 <- data.frame(strata_t@legend, strata_t@size, strata_mean_reviews)
+colnames(results_1) <- c("t_range","num_days","mean_num_reviews") 
